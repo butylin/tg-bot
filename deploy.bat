@@ -5,7 +5,7 @@ mkdir ../logs
 mkdir ../config
 mkdir ../db
 type NUL > ../logs/bot.log
-echo {"token": "your_token_here", "users": [], "chats": []} > ../config/bot.conf
+echo {"admin" : [],"token": "your_token_here", "users": [], "chats": []} > ../config/bot.conf
 
 REM Install non-standard python libraries
 pip install python-telegram-bot

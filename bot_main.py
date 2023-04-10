@@ -139,10 +139,13 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 # handles /list command
 async def bday_list_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     sorted_people = get_bday_sorted_by_nearest()
-    bdays_str = ""
 
+    if len(sorted_people) < 1:
+        await update.message.reply_text("Список пуст")
+
+    bdays_str = ""
     for person in sorted_people:
-        bdays_str += f"#{person.id}: {person.full_name} - {person.birthday}\n"
+        bdays_str += f"#{person.id}: {person.full_name} - {datetime.strptime(person.birthday, '%Y-%m-%d').date().strftime('%d-%m-%Y')}\n"
 
     await update.message.reply_text(bdays_str)
 
@@ -160,7 +163,10 @@ def get_bday_sorted_by_nearest() -> list[Person]:
     db = Database(DATBASE_FILE)
 
     people = db.get_people()
-    return sorted(people, key=days_until_birthday)
+    if len(people) > 0:
+        return sorted(people, key=days_until_birthday)
+    else:
+        return []
 
 
 # handles /add command
@@ -196,7 +202,7 @@ async def bday_del_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["index_to_delete"] = person_to_delete.id
     reply_keyboard = [['Да', 'Нет']]
     await update.message.reply_text(
-        f"Точно хотите удалить {person_to_delete.full_name}",
+        f"Точно хотите удалить {person_to_delete.full_name}?",
         reply_markup=telegram.ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
     )
 
@@ -206,7 +212,7 @@ async def bday_del_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # handles response to bday_del_command
 async def handle_confirmation_response(update, context: ContextTypes.DEFAULT_TYPE) -> int:
     response = update.message.text
-    if str(response).lower() == 'Да'.lower() | str(response).lower() == 'Yes'.lower():
+    if str(response).lower() in ['да', 'yes']:
         index_to_delete = context.user_data["index_to_delete"]
         db = Database(DATBASE_FILE)
         db.delete_person(index_to_delete)

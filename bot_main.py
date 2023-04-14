@@ -26,7 +26,7 @@ if __version_info__ < (20, 0, 0, "alpha", 1):
 
 # Enable logging
 logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", encoding='utf-8', level=logging.INFO
 )
 logger = logging.getLogger(__name__)
 file_handler = logging.FileHandler('../logs/bot.log')
@@ -125,7 +125,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     help_text = "Доступные команды:\n"
     help_text += "/list - список всех людей с датами их рождения\n"
     help_text += "/next - следующий именинник\n"
-    help_text += "/add name date - добавляет нового человека с указанным именем и датой рождения\n"
+    help_text += "/add name date - добавляет нового человека с указанным именем и датой рождения (формат даты дд-мм-ГГГГ)\n"
     help_text += "/del index - удаляет человека с указанным номером из списка\n"
     # help_text = "Available commands:\n"
     # help_text += "/help - shows the help message\n"
@@ -182,7 +182,8 @@ async def bday_add_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     db.insert_person(name, bday)
 
     reply = f"ДР для {name} теперь {bday}!"
-    logger.info(reply)
+    user = update.message.chat_id
+    logger.info(f"User [{user}] added BD for {name} : {bday}")
     await update.message.reply_text(reply)
 
 
@@ -216,6 +217,9 @@ async def handle_confirmation_response(update, context: ContextTypes.DEFAULT_TYP
         index_to_delete = context.user_data["index_to_delete"]
         db = Database(DATBASE_FILE)
         db.delete_person(index_to_delete)
+        user = update.message.chat_id
+        logger.info(f"User [{user}] deleted BD for index {index_to_delete}")
+
         await update.message.reply_text('Удаление успешно.', reply_markup=telegram.ReplyKeyboardRemove())
     else:
         await update.message.reply_text('Удаление отменено.', reply_markup=telegram.ReplyKeyboardRemove())
@@ -225,7 +229,7 @@ async def handle_confirmation_response(update, context: ContextTypes.DEFAULT_TYP
 
 
 async def error_handler(update, context):
-    logger.error(f"Exception while handling an update: {context.error}")
+    logger.error(f"Exception while handling an update: {context.error}".encode('utf-8'))
     await update.message.reply_text(f"Exception while handling an update: {context.error}")
 
 

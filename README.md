@@ -1,6 +1,6 @@
 fix the errors
 # tg-bot
-DB notification Telegram bot for friends :)
+BD notification Telegram bot for friends :)
 
 Prerequisites:
 1. Python 3

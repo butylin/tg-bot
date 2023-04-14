@@ -8,8 +8,5 @@ type NUL > ../logs/bot.log
 echo {"admin" : [],"token": "your_token_here", "users": [], "chats": []} > ../config/bot.conf
 
 REM Install non-standard python libraries
-pip install python-telegram-bot
-pip install apscheduler
-
-REM Run the program
-REM python program.py
+pip3 install python-telegram-bot
+pip3 install apscheduler

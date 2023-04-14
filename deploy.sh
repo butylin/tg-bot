@@ -5,11 +5,8 @@ mkdir ../logs
 mkdir ../config
 mkdir ../db
 touch ../logs/bot.log
-echo '{"token": "your_token_here", "users": [], "chats": []}' > ../config/bot.conf
+echo '{"admin" : [],"token": "your_token_here", "users": [], "chats": []}' > ../config/bot.conf
 
 # Install non-standard python libraries
-pip install python-telegram-bot
-pip install apscheduler
-
-# Run the program
-python program.py
+pip3 install python-telegram-bot
+pip3 install apscheduler

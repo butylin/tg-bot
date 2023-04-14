@@ -71,10 +71,8 @@ class Database:
     def get_upcoming_birthdays(self) -> list[Person]:
         with sqlite3.connect(self.db_file) as conn:
             cursor = conn.cursor()
-            today = datetime.today().strftime('%Y-%m-%d')
-            tomorrow = (datetime.today() + timedelta(days=1)).strftime('%Y-%m-%d')
             cursor.execute(
-                "SELECT name, birthday FROM people WHERE birthday IN (?, ?)", (today, tomorrow)
+                "SELECT name, birthday FROM people WHERE strftime('%m-%d', birthday) BETWEEN strftime('%m-%d', 'now') AND strftime('%m-%d', 'now', '+1 day')"
             )
             rows = cursor.fetchall()
             people_list = [Person(row[0], row[1], row[0]) for row in rows]

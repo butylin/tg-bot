@@ -46,9 +46,8 @@ class DBJob:
 
         # notifying at 20 ETC about tomorrows birthday is optimal for both NA and Siberia
         # (hope it won't wake up our european friends :)
-        jobs = context.job_queue.jobs()
         context.job_queue.run_daily(self.notify_bd,
-                                    datetime.time(hour=21, minute=24, tzinfo=pytz.timezone('US/Eastern')),
+                                    datetime.time(hour=20, minute=00, tzinfo=pytz.timezone('US/Eastern')),
                                     name=str(chat_id))
 
     def stop(self, context, chat_id):

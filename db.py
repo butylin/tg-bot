@@ -72,7 +72,7 @@ class Database:
         with sqlite3.connect(self.db_file) as conn:
             cursor = conn.cursor()
             cursor.execute(
-                "SELECT name, birthday FROM people WHERE strftime('%m-%d', birthday) BETWEEN strftime('%m-%d', 'now') AND strftime('%m-%d', 'now', '+1 day')"
+                "SELECT name, birthday FROM people WHERE strftime('%m-%d', birthday) = strftime('%m-%d', 'now', '+1 day')"
             )
             rows = cursor.fetchall()
             people_list = [Person(row[0], row[1], row[0]) for row in rows]

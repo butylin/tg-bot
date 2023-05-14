@@ -101,14 +101,27 @@ def read_config():
 
 # handles /start command
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    chat_id = update.message.chat_id
+    caller = update.message.chat_id
+    arg = get_command_agrs(update)
+
+    if len(arg) < 1:
+        chat_id = caller
+    else:
+        chat_id = arg
+
     bday_job.start(context, chat_id)
-    await context.bot.sendMessage(chat_id, "starting bday notificator..")
+    await context.bot.sendMessage(caller, f"starting bday notificator for chat {chat_id}")
 
 
 # handles /start command
 async def stop(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    chat_id = update.message.chat_id
+    arg = get_command_agrs(update)
+
+    if len(arg) < 1:
+        chat_id = update.message.chat_id
+    else:
+        chat_id = arg
+
     bday_job.stop(context, chat_id)
     await context.bot.sendMessage(chat_id, "bday notificator stopped..")
 

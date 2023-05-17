@@ -72,7 +72,7 @@ class DBJob:
         # Get today's and tomorrow's birthdays
         db = Database(self.database_file)
         people = db.get_upcoming_birthdays()
-        message = "Скоро ДР у следующих товарищей:\n"
+        message = "Завтра ДР у:\n"
 
         if len(people) > 0:
             # Construct a response with the names of the people whose birthday it is today or tomorrow

@@ -36,16 +36,10 @@ class DBJob:
 
     def __init__(self, database_file):
         self.__name__ = "DBJob"
-        self.subscribers = set()
         self.database_file = database_file
 
     def start(self, context: ContextTypes.DEFAULT_TYPE, chat_id):
-        self.subscribe(chat_id)
         job_removed = self.remove_job_if_exists(str(chat_id), context)
-        # context.job_queue.run_repeating(self.notify_bd, 5, name=str(chat_id))
-
-        # notifying at 20 ETC about tomorrows birthday is optimal for both NA and Siberia
-        # (hope it won't wake up our european friends :)
         context.job_queue.run_daily(self.notify_bd,
                                     datetime.time(hour=9, minute=00, tzinfo=pytz.timezone('US/Eastern')),
                                     name=str(chat_id))
@@ -62,12 +56,6 @@ class DBJob:
             job.schedule_removal()
         return True
 
-    def subscribe(self, subscriber_id):
-        self.subscribers.add(subscriber_id)
-
-    def unsubscribe(self, subscriber_id):
-        self.subscribers.remove(subscriber_id)
-
     async def notify_bd(self, context: ContextTypes.DEFAULT_TYPE) -> None:
         # Get today's and tomorrow's birthdays
         db = Database(self.database_file)
@@ -81,5 +69,6 @@ class DBJob:
             message += "\n" + random.choice(birthday_greetings)
 
             # Send the response to all users
-            for chat_id in self.subscribers:
-                await context.bot.send_message(chat_id, text=message)
+
+            chat_id = context.job.name
+            await context.bot.send_message(chat_id, text=message)
